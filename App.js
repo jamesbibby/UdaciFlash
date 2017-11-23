@@ -2,7 +2,15 @@ import React, { Component } from 'react'
 import { createStore } from 'redux'
 import { Provider, connect } from 'react-redux'
 import reducer from './reducers'
-import { Platform, StatusBar, StyleSheet, Text, View } from 'react-native'
+import { initializeState } from './actions'
+import {
+	Platform,
+	StatusBar,
+	StyleSheet,
+	Text,
+	View,
+	AsyncStorage,
+} from 'react-native'
 import { Constants } from 'expo'
 import { white, purple } from './utils/colors'
 import { FontAwesome, Ionicons } from '@expo/vector-icons'
@@ -12,6 +20,8 @@ import AddCard from './components/AddCard'
 import Quiz from './components/Quiz'
 import DeckView from './components/DeckView'
 import { StackNavigator, TabNavigator } from 'react-navigation'
+
+const FLASHCARD_KEY = 'FLASHCARD_KEY'
 
 function UdaciStatusBar({ backgroundColor, ...props }) {
 	return (
@@ -81,11 +91,28 @@ const MainNavigator = StackNavigator({
 	},
 })
 
+const store = createStore(reducer)
+
+const handleChange = () => {
+	const newState = JSON.stringify(store.getState())
+	console.log('saved', newState)
+	AsyncStorage.setItem(FLASHCARD_KEY, newState)
+}
+
+store.subscribe(handleChange)
+
 export default class App extends Component {
+	componentDidMount() {
+		AsyncStorage.getItem(FLASHCARD_KEY).then(result => {
+			savedState = result ? JSON.parse(result) : {}
+			console.log('received', result)
+			store.dispatch(initializeState(savedState))
+		})
+	}
 	render() {
 		const { decks } = this.props
 		return (
-			<Provider store={createStore(reducer)}>
+			<Provider store={store}>
 				<View style={{ flex: 1 }}>
 					<UdaciStatusBar backgroundColor={purple} barStyle="light-content" />
 					<MainNavigator />

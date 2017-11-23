@@ -8,9 +8,10 @@ import {
 	Button,
 } from 'react-native'
 import { connect } from 'react-redux'
-import { white, purple } from '../utils/colors'
+import { white, purple, green } from '../utils/colors'
 
 const Deck = props => {
+	const { title, questions, navigation } = props
 	return (
 		<View style={styles.container}>
 			<View
@@ -20,8 +21,10 @@ const Deck = props => {
 					paddingBottom: 80,
 				}}
 			>
-				<Text style={styles.titleText}>{props.title}</Text>
-				<Text style={styles.cardText}>{props.questions.length} cards</Text>
+				<Text style={styles.titleText}>{title}</Text>
+				<Text style={styles.cardText}>
+					{questions.length} card{questions.length === 1 ? '' : 's'}
+				</Text>
 			</View>
 			<View
 				style={{
@@ -31,8 +34,11 @@ const Deck = props => {
 				}}
 			>
 				<TouchableOpacity
-					style={Platform.OS === 'ios' ? styles.iosBtn : styles.androidBtn}
-					onPress={() => props.navigation.navigate('AddCard')}
+					style={[
+						Platform.OS === 'ios' ? styles.iosBtn : styles.androidBtn,
+						{ backgroundColor: green },
+					]}
+					onPress={() => navigation.navigate('AddCard', { deckName: title })}
 				>
 					<Text style={styles.btnText}>Add a Card</Text>
 				</TouchableOpacity>
@@ -40,9 +46,7 @@ const Deck = props => {
 			<View>
 				<TouchableOpacity
 					style={Platform.OS === 'ios' ? styles.iosBtn : styles.androidBtn}
-					onPress={() =>
-						props.navigation.navigate('Quiz', { deckName: props.title })
-					}
+					onPress={() => navigation.navigate('Quiz', { deckName: title })}
 				>
 					<Text style={styles.btnText}>Take Quiz</Text>
 				</TouchableOpacity>
@@ -98,14 +102,6 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 	},
 })
-
-function mapStateToProps(state, { navigation }) {
-	const { entryId } = navigation.state.params
-	return {
-		entryId,
-		metrics: state[entryId],
-	}
-}
 
 function mapStateToProps(decks, { navigation }) {
 	const { deckName } = navigation.state.params

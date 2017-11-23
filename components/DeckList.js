@@ -6,8 +6,12 @@ import {
 	Text,
 	View,
 	FlatList,
+	Platform,
 } from 'react-native'
-import { purple, gray } from '../utils/colors'
+import { purple, gray, red, lightGray } from '../utils/colors'
+import Swipeout from 'react-native-swipeout'
+import { Ionicons } from '@expo/vector-icons'
+import { removeDeck } from '../actions'
 
 class Deck extends Component {
 	render() {
@@ -21,7 +25,9 @@ class Deck extends Component {
 				>
 					<View style={{ alignItems: 'center' }}>
 						<Text style={styles.deckTitle}>{title}</Text>
-						<Text style={styles.deckCards}>{questions.length} cards</Text>
+						<Text style={styles.deckCards}>
+							{questions.length} card{questions.length === 1 ? '' : 's'}
+						</Text>
 					</View>
 				</TouchableOpacity>
 			</View>
@@ -30,16 +36,59 @@ class Deck extends Component {
 }
 
 const DeckList = props => {
+	const { removeDeck, decks, navigation } = props
 	return (
 		<View style={styles.container}>
-			<FlatList
-				data={props.decks}
-				keyExtractor={(item, index) => item.title}
-				renderItem={({ item }) => (
-					<Deck {...item} navigation={props.navigation} />
-				)}
-				ItemSeparatorComponent={() => <View style={styles.separator} />}
-			/>
+			{decks.length > 0 ? (
+				<FlatList
+					data={decks}
+					keyExtractor={(item, index) => item.title}
+					renderItem={({ item }) => (
+						<Swipeout
+							style={{
+								justifyContent: 'center',
+								alignItems: 'stretch',
+							}}
+							right={[
+								{
+									component: (
+										<View style={styles.swipeable}>
+											<Ionicons
+												style={{
+													alignSelf: 'center',
+												}}
+												name={Platform.OS === 'ios' ? 'ios-trash' : 'md-trash'}
+												size={50}
+												color={red}
+											/>
+										</View>
+									),
+									onPress: () => removeDeck(item.title),
+								},
+							]}
+						>
+							<Deck {...item} navigation={navigation} />
+						</Swipeout>
+					)}
+					ItemSeparatorComponent={() => <View style={styles.separator} />}
+				/>
+			) : (
+				<View
+					style={{
+						flex: 1,
+						alignItems: 'center',
+						justifyContent: 'center',
+					}}
+				>
+					<Text
+						style={{
+							fontSize: 22,
+						}}
+					>
+						Add a deck to get started
+					</Text>
+				</View>
+			)}
 		</View>
 	)
 }
@@ -48,15 +97,18 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		flexDirection: 'row',
-		paddingLeft: 20,
-		paddingRight: 20,
 		alignItems: 'stretch',
+		backgroundColor: 'white',
 	},
 	row: {
 		alignItems: 'center',
 		justifyContent: 'center',
 		paddingTop: 20,
 		paddingBottom: 20,
+		paddingLeft: 20,
+		paddingRight: 20,
+		flex: 1,
+		backgroundColor: 'white',
 	},
 	separator: {
 		backgroundColor: gray,
@@ -68,10 +120,22 @@ const styles = StyleSheet.create({
 	deckCards: {
 		fontSize: 14,
 	},
+	swipeable: {
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: 'center',
+		backgroundColor: lightGray,
+	},
 })
 
 function mapStateToProps(decks, stuff) {
 	return { decks: Object.keys(decks).map(key => decks[key]) }
 }
 
-export default connect(mapStateToProps)(DeckList)
+function mapDispatchToProps(dispatch) {
+	return {
+		removeDeck: title => dispatch(removeDeck(title)),
+	}
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(DeckList)
