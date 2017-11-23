@@ -20,7 +20,7 @@ class AddCard extends Component {
 	}
 	submit = () => {
 		const { question, answer } = this.state
-		const { navigation } = this.props
+		const { addCard, navigation } = this.props
 		const { deckName } = navigation.state.params
 		let error = false
 		if (question === '') {
@@ -35,7 +35,7 @@ class AddCard extends Component {
 				error: { ...state.error, answer: 'Please enter an answer' },
 			}))
 		}
-		if (!error) {
+		if (error === false) {
 			addCard(deckName, question, answer)
 			navigation.goBack()
 		}

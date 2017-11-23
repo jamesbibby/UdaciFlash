@@ -2,7 +2,12 @@
 
 This project is a ReactNative application which allows the user to create and
 test with sets of FlashCards. It runs standalone and does not require network
-connectivity. It was built as part of the Udacity React Nanodegree
+connectivity. It was built as part of the Udacity React Nanodegree.
+
+# Platforms
+
+This project has been tested in both Android and iOS Emulators and contains
+platform specific navigation, icons and behaviors.
 
 # Running the Application
 

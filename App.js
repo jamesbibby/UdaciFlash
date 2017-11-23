@@ -20,8 +20,9 @@ import AddCard from './components/AddCard'
 import Quiz from './components/Quiz'
 import DeckView from './components/DeckView'
 import { StackNavigator, TabNavigator } from 'react-navigation'
+import { setLocalNotification } from './utils/helpers'
 
-const FLASHCARD_KEY = 'FLASHCARD_KEY'
+const FLASHCARD_KEY = 'UdaciFlash:StorageKey'
 
 function UdaciStatusBar({ backgroundColor, ...props }) {
 	return (
@@ -102,10 +103,12 @@ store.subscribe(handleChange)
 
 export default class App extends Component {
 	componentDidMount() {
-		AsyncStorage.getItem(FLASHCARD_KEY).then(result => {
-			const savedState = result ? JSON.parse(result) : {}
-			store.dispatch(initializeState(savedState))
-		})
+		setLocalNotification()
+		AsyncStorage.getItem(FLASHCARD_KEY)
+			.then(JSON.parse)
+			.then(savedState =>
+				store.dispatch(initializeState(savedState ? savedState : {}))
+			)
 	}
 	render() {
 		const { decks } = this.props

@@ -10,6 +10,7 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 import { Ionicons } from '@expo/vector-icons'
+import { clearLocalNotifications, setLocalNotification } from '../utils/helpers'
 import { purple, white, lightPurp, green, red } from '../utils/colors'
 
 class Quiz extends Component {
@@ -34,6 +35,9 @@ class Quiz extends Component {
 			inputRange: [0, 180],
 			outputRange: ['180deg', '360deg'],
 		})
+	}
+	componentDidMount() {
+		clearLocalNotifications().then(setLocalNotification)
 	}
 	flip = () => {
 		Animated.timing(this.animatedValue, {
