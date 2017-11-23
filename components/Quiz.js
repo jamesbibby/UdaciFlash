@@ -67,7 +67,7 @@ class Quiz extends Component {
 		)
 	}
 	render() {
-		const { questions, navigation } = this.props
+		const { questions, navigation, title } = this.props
 		const { index, flipValue, correct } = this.state
 		const frontAnimatedStyle = {
 			transform: [{ rotateY: this.frontInterpolate }],
@@ -78,7 +78,9 @@ class Quiz extends Component {
 		return index < questions.length ? (
 			<View style={styles.container}>
 				<View style={{ alignItems: 'center' }}>
-					<Text>Question {index + 1}</Text>
+					<Text style={{ fontSize: 18 }}>
+						Question {index + 1} of {questions.length}
+					</Text>
 					<View>
 						{flipValue > 90 ? (
 							<Animated.View
@@ -139,6 +141,36 @@ class Quiz extends Component {
 						You got {correct} correct out of {questions.length}
 					</Text>
 				</View>
+				<View
+					style={{
+						alignItems: 'center',
+						justifyContent: 'center',
+						paddingBottom: 40,
+					}}
+				>
+					<TouchableOpacity
+						style={[
+							Platform.OS === 'ios' ? styles.iosBtn : styles.androidBtn,
+							{ backgroundColor: green },
+						]}
+						onPress={() => navigation.goBack()}
+					>
+						<Text style={styles.btnText}>Back To Deck</Text>
+					</TouchableOpacity>
+
+					<TouchableOpacity
+						style={Platform.OS === 'ios' ? styles.iosBtn : styles.androidBtn}
+						onPress={() =>
+							this.setState({
+								index: 0,
+								correct: 0,
+								flipValue: 0,
+							})
+						}
+					>
+						<Text style={styles.btnText}>Restart Quiz</Text>
+					</TouchableOpacity>
+				</View>
 			</View>
 		)
 	}
@@ -175,7 +207,7 @@ const styles = StyleSheet.create({
 	},
 	btnText: {
 		color: white,
-		fontSize: 22,
+		fontSize: 18,
 		textAlign: 'center',
 	},
 	flippableCard: {
