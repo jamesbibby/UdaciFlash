@@ -95,7 +95,6 @@ const store = createStore(reducer)
 
 const handleChange = () => {
 	const newState = JSON.stringify(store.getState())
-	console.log('saved', newState)
 	AsyncStorage.setItem(FLASHCARD_KEY, newState)
 }
 
@@ -104,8 +103,7 @@ store.subscribe(handleChange)
 export default class App extends Component {
 	componentDidMount() {
 		AsyncStorage.getItem(FLASHCARD_KEY).then(result => {
-			savedState = result ? JSON.parse(result) : {}
-			console.log('received', result)
+			const savedState = result ? JSON.parse(result) : {}
 			store.dispatch(initializeState(savedState))
 		})
 	}
