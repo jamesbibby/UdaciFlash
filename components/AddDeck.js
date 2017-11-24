@@ -11,6 +11,7 @@ import {
 import { connect } from 'react-redux'
 import { gray, white, purple, red } from '../utils/colors'
 import { addDeck } from '../actions'
+import { NavigationActions } from 'react-navigation'
 
 class AddDeck extends Component {
 	state = { title: '' }
@@ -25,7 +26,24 @@ class AddDeck extends Component {
 			return
 		}
 		addDeck(title)
-		navigation.navigate('Home')
+
+		// this resets the navigation stack to include the home screen and then the deck view screen
+		// this ensures that the back button from deckview returns to the correct home
+		const resetAction = NavigationActions.reset({
+			index: 1,
+			actions: [
+				NavigationActions.navigate({
+					routeName: 'Home',
+					actions: [NavigationActions.navigate('Decks')],
+				}),
+				NavigationActions.navigate({
+					routeName: 'DeckView',
+					params: { deckName: title },
+				}),
+			],
+		})
+
+		navigation.dispatch(resetAction)
 	}
 	render() {
 		return (
