@@ -39,6 +39,9 @@ class Quiz extends Component {
 	componentDidMount() {
 		clearLocalNotifications().then(setLocalNotification)
 	}
+	componenWillUnmount() {
+		this.animatedValue.removeAllListeners()
+	}
 	flip = () => {
 		Animated.timing(this.animatedValue, {
 			toValue: this.state.flipValue < 90 ? 180 : 0,
