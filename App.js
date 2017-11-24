@@ -57,6 +57,7 @@ const Tabs = TabNavigator(
 		navigationOptions: {
 			header: null,
 		},
+		swipeEnabled: false,
 		tabBarOptions: {
 			activeTintColor: Platform.OS === 'ios' ? purple : white,
 			style: {
